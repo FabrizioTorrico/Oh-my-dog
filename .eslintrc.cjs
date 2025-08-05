@@ -26,7 +26,6 @@ const config = {
   rules: {
     "no-console": "warn",
     "no-nested-ternary": "off",
-    "no-unused-vars": "off",
     "no-use-before-define": "off",
     "react/react-in-jsx-scope": "off",
     "react/jsx-curly-newline": "off",

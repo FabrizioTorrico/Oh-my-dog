@@ -1,3 +1,60 @@
+@import "./fonts.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@media (max-width: 1250px) {
+  html {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 768px) {
+  html {
+    font-size: 10px;
+  }
+}
+
+input::-ms-reveal,
+input::-ms-clear {
+  display: none;
+}
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .scale-95 {
+    transform: scale(0.95);
+  }
+  .scale-100 {
+    transform: scale(1);
+  }
+  .no-ring {
+    @apply ring-0 ring-transparent ring-offset-0 ring-offset-transparent;
+  }
+  .stroke-2 path {
+    stroke-width: 2 !important;
+  }
+  .stroke-1\.75 path {
+    stroke-width: 1.75 !important;
+  }
+  .stroke-1\.5 path {
+    stroke-width: 1.5 !important;
+  }
+  .stroke-1\.2 path {
+    stroke-width: 1.2 !important;
+  }
+
+  .animation-delay-0 {
+    animation-delay: 0s;
+  }
+
+  .animation-delay-200 {
+    animation-delay: 0.2s;
+  }
+
+  .animation-delay-400 {
+    animation-delay: 0.4s;
+  }
+}

@@ -1,3 +1,52 @@
+# Important commands in development
+
+> For every command you can get more info with <command> --help
+> If you dont have the command installed globally, use **npx <command>**
+
+## Setup
+
+install dependencies:
+
+```
+npm install -g yarn
+npm install -g prisma
+yarn
+git flow init
+```
+
+run project: `yarn run dev`
+
+run prisma: `prisma studio`
+
+update prisma: `yarn upgrade @prisma/cli @prisma/client`
+
+## Develop commands
+
+move to another branch: `git checkout <branch>`
+
+### Before starting coding
+
+move to develop
+
+get last changes: `git pull`
+
+generate schemas from DB:
+
+```
+prisma generate
+ctrl+p > Developer: Reload Window
+```
+
+create new branch: `git flow <status> start <branch-name>`
+
+### Send changes to github repo
+
+add changes: `git add .`
+
+commit changes: `git commit -m "description"`
+
+push changes: `git push origin <branch>`
+
 # Create T3 App
 
 This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.

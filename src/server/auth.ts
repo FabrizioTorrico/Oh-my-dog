@@ -3,12 +3,13 @@ import {
   getServerSession,
   type NextAuthOptions,
   type DefaultSession,
+  type Session,
 } from "next-auth";
 import CredentialProviders from "next-auth/providers/credentials";
-import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { prisma } from "~/server/db";
 import { type User } from "@prisma/client";
-import { compare } from "bcryptjs";
+import { compareSync } from "bcryptjs";
+import { hasKey } from "~/utils/language/objUtils";
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
  * object and keep type safety.
@@ -16,14 +17,9 @@ import { compare } from "bcryptjs";
  * @see https://next-auth.js.org/getting-started/typescript#module-augmentation
  */
 declare module "next-auth" {
-  interface Session extends DefaultSession {
-    user: Omit<User, "emailVerified" | "password"> & DefaultSession["user"];
+  export interface Session extends DefaultSession {
+    user: Omit<User, "password"> /*  & DefaultSession["user"]; */;
   }
-
-  // interface User {
-  //   // ...other properties
-  //   // role: UserRole;
-  // }
 }
 
 /**
@@ -32,24 +28,45 @@ declare module "next-auth" {
  * @see https://next-auth.js.org/configuration/options
  */
 export const authOptions: NextAuthOptions = {
+  session: {
+    strategy: "jwt",
+    maxAge: 30 * 24 * 60 * 60, // 30 days
+  },
   callbacks: {
-    jwt: async ({ token, user }) => {
-      user && (token.user = user);
+    jwt: async ({ token, user, trigger, session }) => {
+      if (user as User | null) {
+        token.user = user;
+      }
+      if (trigger === "update" && session) {
+        /* if ((session as Partial<Session["user"]>).passwordVerified) {
+          (token.user as Session["user"]).passwordVerified = (
+            session as Partial<Session["user"]>
+          ).passwordVerified as Date;
+        } */
+
+        Object.entries(session as Partial<Session["user"]>).forEach(
+          ([key, value]) => {
+            if (!!value) {
+              if (
+                hasKey(
+                  token.user as Session["user"],
+                  key as keyof Session["user"]
+                )
+              ) {
+                (token.user as Record<typeof key, typeof value>)[key] = value;
+              }
+            }
+          }
+        );
+      }
       return Promise.resolve(token);
     },
     session: async ({ session, token }) => {
-      session.user = token.user as Omit<User, "password">;
+      session.user = token.user as Session["user"];
       return Promise.resolve(session);
     },
-    /* session({ session, user }) {
-      if (session.user.id) {
-        session.user.id = user.id;
-        // session.user.role = user.role; <-- put other properties on the session here
-      }
-      return session;
-    }, */
   },
-  adapter: PrismaAdapter(prisma),
+  // adapter: PrismaAdapter(prisma),
   providers: [
     CredentialProviders({
       id: "credentials",
@@ -71,7 +88,7 @@ export const authOptions: NextAuthOptions = {
           throw new Error("No user found");
         }
 
-        const isPasswordValid = await compare(
+        const isPasswordValid = compareSync(
           credentials.password,
           user.password
         );
@@ -81,20 +98,12 @@ export const authOptions: NextAuthOptions = {
         }
 
         const { password, ...userWithoutPassword } = user;
+
         return userWithoutPassword;
       },
     }),
-    /**
-     * ...add more providers here.
-     *
-     * Most other providers require a bit more work than the Discord provider. For example, the
-     * GitHub provider requires you to add the `refresh_token_expires_in` field to the Account
-     * model. Refer to the NextAuth.js docs for the provider you want to use. Example:
-     *
-     * @see https://next-auth.js.org/providers/github
-     */
   ],
-  pages: { signIn: "/" },
+  // pages: { signIn: "/auth/signIn", newUser: "/newUser" },
 };
 
 /**
@@ -102,9 +111,20 @@ export const authOptions: NextAuthOptions = {
  *
  * @see https://next-auth.js.org/configuration/nextjs
  */
-export const getServerAuthSession = (ctx: {
+export const getServerAuthSession = async (ctx: {
   req: GetServerSidePropsContext["req"];
   res: GetServerSidePropsContext["res"];
 }) => {
-  return getServerSession(ctx.req, ctx.res, authOptions);
+  const session = await getServerSession(ctx.req, ctx.res, authOptions);
+  return session;
+};
+
+export const getTrpcProps = async (ctx: {
+  req: GetServerSidePropsContext["req"];
+  res: GetServerSidePropsContext["res"];
+}) => {
+  return {
+    session: await getServerAuthSession(ctx),
+    prisma,
+  };
 };
