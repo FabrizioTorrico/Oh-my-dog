@@ -1,4 +1,3 @@
-import React from "react";
 import { api } from "~/utils/api";
 import toast from "react-hot-toast";
 import Title from "~/components/_common/Typo/Title";
@@ -25,7 +24,6 @@ export default function DonationCampaignCreationModal() {
       amountGoal: 0,
       img: "",
       reason: "",
-      desc: "",
     },
   });
 

@@ -3,27 +3,18 @@ const path = require("path");
 
 /** @type {import("eslint").Linter.Config} */
 const config = {
-  overrides: [
-    {
-      extends: [
-        "plugin:@typescript-eslint/recommended-requiring-type-checking",
-        "plugin:react/recommended",
-        "plugin:react-hooks/recommended",
-        "prettier",
-      ],
-      files: ["*.ts", "*.tsx"],
-      parserOptions: {
-        project: path.join(__dirname, "tsconfig.json"),
-      },
-    },
-  ],
   parser: "@typescript-eslint/parser",
   parserOptions: {
     project: path.join(__dirname, "tsconfig.json"),
   },
   plugins: ["@typescript-eslint"],
-  extends: ["next/core-web-vitals", "plugin:@typescript-eslint/recommended"],
+  extends: [
+    "next/core-web-vitals",
+    "plugin:@typescript-eslint/recommended",
+    "prettier",
+  ], // Mover "prettier" aquí
   rules: {
+    // Tus reglas personalizadas van aquí, después de los extends
     "no-console": "warn",
     "no-nested-ternary": "off",
     "no-use-before-define": "off",
@@ -56,6 +47,26 @@ const config = {
       },
     ],
   },
+  overrides: [
+    {
+      files: ["*.ts", "*.tsx"],
+      parserOptions: {
+        project: path.join(__dirname, "tsconfig.json"),
+      },
+      // También aplica las reglas personalizadas en el override
+      extends: [
+        "plugin:@typescript-eslint/recommended-requiring-type-checking",
+        "plugin:react/recommended",
+        "plugin:react-hooks/recommended",
+        "prettier",
+      ],
+      rules: {
+        // Asegúrate de que las reglas que quieres sobreescribir estén aquí también si el linter no las reconoce
+        "react/react-in-jsx-scope": "off",
+        // ... otras reglas que quieras sobreescribir
+      },
+    },
+  ],
 };
 
 module.exports = config;
