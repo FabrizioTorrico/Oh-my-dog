@@ -102,12 +102,12 @@ bun start
 
 ## 📝 Scripts Disponibles
 
-- `yarn dev` - Ejecuta el servidor de desarrollo
-- `yarn build` - Construye la aplicación para producción
-- `yarn start` - Ejecuta la aplicación en modo producción
-- `yarn lint` - Ejecuta el linter y valida el esquema de Prisma
+- `bun dev` - Ejecuta el servidor de desarrollo
+- `bun build` - Construye la aplicación para producción
+- `bun start` - Ejecuta la aplicación en modo producción
+- `bun lint` - Ejecuta el linter y valida el esquema de Prisma
 - `prisma studio` - Abre Prisma Studio para gestionar la base de datos
-- `yarn ngrok` - Expone el servidor local usando ngrok
+- `bun ngrok` - Expone el servidor local usando ngrok
 
 ## 🗄️ Estructura de la Base de Datos
 
