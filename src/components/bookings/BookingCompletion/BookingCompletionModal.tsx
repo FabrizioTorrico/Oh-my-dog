@@ -1,4 +1,3 @@
-import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { api } from "~/utils/api";
@@ -44,11 +43,13 @@ export default function BookingCompletionModal({
       bookingId: booking.id,
     },
   });
-  const payAmount = isNaN(methods.watch("payAmount")) ? 0 : methods.watch("payAmount");
+  const payAmount = isNaN(methods.watch("payAmount"))
+    ? 0
+    : methods.watch("payAmount");
   const payWithDiscount =
-    payAmount - (booking.user.discountAmount ?? 0) <= payAmount / 2
+    payAmount - (booking.user?.discountAmount ?? 0) <= payAmount / 2
       ? payAmount / 2
-      : payAmount - (booking.user.discountAmount ?? 0);
+      : payAmount - (booking.user?.discountAmount ?? 0);
   return (
     <Form
       methods={methods}
@@ -104,7 +105,7 @@ export default function BookingCompletionModal({
         }}
         required
       />
-      {!!booking.user.discountAmount &&
+      {!!booking.user?.discountAmount &&
         `El monto con descuento es de $${payWithDiscount}`}
     </Form>
   );

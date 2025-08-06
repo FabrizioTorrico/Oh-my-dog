@@ -1,4 +1,3 @@
-import React from "react";
 import { api } from "~/utils/api";
 import { BookingUpdateSchema } from "~/schemas/bookingSchema";
 import { toast } from "react-hot-toast";
@@ -32,7 +31,7 @@ export default function BookingUpdateModal({ booking }: BookingUpdateProps) {
         id: booking.id,
         ...(booking.vaccine ? { vaccine: booking.vaccine } : undefined),
       },
-      dog: booking.dog.id,
+      dog: booking.dog?.id,
     },
   });
 

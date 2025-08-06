@@ -86,6 +86,7 @@ const config = {
     },
   },
   plugins: [
+    // @ts-ignore
     function ({ addUtilities }) {
       const lineClampUtilities = {
         // Usage: truncate-[3]
